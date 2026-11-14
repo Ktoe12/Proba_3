@@ -1,0 +1,68 @@
+{% extends 'war/base.html' %}
+
+{% block content %}
+<h2>General Deadlock's Army</h2>
+<a href="{% url 'add_unit' %}" class="btn btn-success mb-3">Add New Unit</a>
+
+<div class="row">
+    {% for unit in units %}
+    <div class="col-md-4 mb-3">
+        <div class="card cursor-pointer" onclick="window.location.href='{% url 'unit_detail' unit.id %}'" style="cursor: pointer;">
+            <div class="card-body d-flex align-items-center">
+                <!-- Imagine 50x50 conform cerinței -->
+                <img src="{{ unit.profile_image_link }}" width="50" height="50" class="rounded-circle me-3" alt="{{ unit.name }}">
+                <div>
+                    <h5 class="card-title mb-0">{{ unit.name }}</h5>
+                    <p class="card-text text-muted">{{ unit.team }} {{ unit.unit_type }} | HP: {{ unit.health }}</p>
+                </div>
+            </div>
+            {% if unit.health < 100 %}
+            <div class="card-footer bg-transparent border-top-0">
+                <form method="POST" action="{% url 'heal_unit' unit.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-success">Heal to 100</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<hr>
+<!-- Formular pentru simulare luptă -->
+<h3>Simulate Fight</h3>
+<form method="POST" action="{% url 'simulate_fight' %}" class="row g-3 align-items-center">
+    {% csrf_token %}
+    <div class="col-auto">
+        <select name="fighter1_id" class="form-select">
+            <option value="">Select Blue Fighter...</option>
+            {% for u in units %}{% if u.team == 'Blue' %}<option value="{{ u.id }}">{{ u.name }}</option>{% endif %}{% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">VS</div>
+    <div class="col-auto">
+        <select name="fighter2_id" class="form-select">
+            <option value="">Select Red Fighter...</option>
+            {% for u in units %}{% if u.team == 'Red' %}<option value="{{ u.id }}">{{ u.name }}</option>{% endif %}{% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-danger">Simulate</button>
+    </div>
+</form>
+
+<hr>
+<!-- 4.b Statisticile calculate -->
+<h3>War Statistics</h3>
+<div class="row text-center">
+    <div class="col"><div class="p-3 bg-primary text-white rounded">
+        <h5>Team BLUE</h5>
+        <p>Fights: {{ stats.Blue.fights }}<br>Dmg Caused: {{ stats.Blue.dmg_caused }}<br>Dmg Taken: {{ stats.Blue.dmg_taken }}</p>
+    </div></div>
+    <div class="col"><div class="p-3 bg-danger text-white rounded">
+        <h5>Team RED</h5>
+        <p>Fights: {{ stats.Red.fights }}<br>Dmg Caused: {{ stats.Red.dmg_caused }}<br>Dmg Taken: {{ stats.Red.dmg_taken }}</p>
+    </div></div>
+</div>
+{% endblock %}

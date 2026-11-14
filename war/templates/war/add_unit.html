@@ -1,0 +1,12 @@
+{% extends 'war/base.html' %}
+
+{% block content %}
+<h2>Draft a New Fighter Unit</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Add Fighter</button>
+</form>
+<br>
+<a href="{% url 'list_units' %}" class="btn btn-secondary">Back to Army</a>
+{% endblock %}

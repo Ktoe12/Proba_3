@@ -1,0 +1,35 @@
+{% extends 'war/base.html' %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body text-center">
+        <img src="{{ unit.profile_image_link }}" width="150" class="rounded mb-3">
+        <h2>{{ unit.name }} ({{ unit.team }})</h2>
+        <p class="lead">Type: {{ unit.unit_type }} | Health: {{ unit.health }} | Attack: {{ unit.attack_points }}</p>
+        <a href="{% url 'list_units' %}" class="btn btn-outline-secondary">Back to Army</a>
+    </div>
+</div>
+
+<!-- 4.a Istoricul luptelor pentru unitatea curentă -->
+<h3>Battle History</h3>
+{% for battle in battles %}
+    <div class="card mb-3 border-{% if battle.winner == unit %}success{% else %}danger{% endif %}">
+        <div class="card-header">
+            <strong>{{ battle.fighter1.name }}</strong> VS <strong>{{ battle.fighter2.name }}</strong>
+            <span class="float-end">Winner: {{ battle.winner.name|default:"Draw" }}</span>
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+            {% for step in battle.steps.all %}
+                <li class="list-group-item">
+                    <small>Step {{ step.step_order }}: {{ step.attacker.name }} attacks for {{ step.damage_dealt }} dmg. 
+                    ({{ step.defender.name }} HP left: {{ step.defender_health }})</small>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% empty %}
+    <p>This unit has not fought in any battles yet.</p>
+{% endfor %}
+{% endblock %}
