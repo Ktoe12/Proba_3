@@ -6,9 +6,10 @@ class Person(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     # Folosim JSONField pentru a stoca dinamic toate atributele (Health, Type, <key>, etc.)
     raw_data = models.JSONField(default=dict)
+    rank = models.CharField(max_length=100, null=True, blank=True) # <-- CÂMPUL NOU
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.rank}"
 
 class FighterUnit(models.Model):
     TYPE_CHOICES = [
